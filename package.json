@@ -1,10 +1,9 @@
 {
-  "name": "express-mongoose-es6-rest-api",
-  "version": "2.0.0",
-  "description": "A Boilerplate application for building REST APIs using express, mongoose in ES6 with code coverage",
-  "author": "Kunal Kapadia <kunalkapadia12@gmail.com>",
+  "name": "Supporter",
+  "version": "1.0.0",
+  "description": "A customer support live chat",
+  "author": "colymore",
   "main": "index.js",
-  "private": false,
   "engines": {
     "node": ">=4.8.0",
     "npm": ">=2.15.11",
@@ -25,21 +24,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:KunalKapadia/express-mongoose-es6-rest-api.git"
+    "url": "git@github.com:colymore/supporter.git"
   },
-  "keywords": [
-    "express",
-    "node",
-    "node.js",
-    "mongodb",
-    "mongoose",
-    "es6",
-    "mocha",
-    "istanbul",
-    "REST",
-    "API",
-    "boilerplate"
-  ],
   "dependencies": {
     "bluebird": "3.4.6",
     "body-parser": "1.15.2",
@@ -59,7 +45,8 @@
     "method-override": "^2.3.5",
     "mongoose": "4.7.4",
     "morgan": "1.7.0",
-    "winston": "2.3.0"
+    "winston": "2.3.0",
+    "websocket": "^1.0.24"
   },
   "devDependencies": {
     "babel-cli": "6.18.0",
@@ -89,8 +76,7 @@
     "mocha": "3.2.0",
     "run-sequence": "^1.1.5",
     "supertest": "2.0.1",
-    "supertest-as-promised": "4.0.2",
-    "validate-commit-msg": "^2.6.1"
+    "supertest-as-promised": "4.0.2"
   },
   "license": "MIT",
   "config": {

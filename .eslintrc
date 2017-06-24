@@ -14,11 +14,6 @@
         "named": "never"
       }
     ],
-    "no-use-before-define": [
-      2,
-      "nofunc"
-    ],
-    // TODO: turn on later
     "comma-dangle": [
       0
     ],

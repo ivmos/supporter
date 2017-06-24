@@ -1,9 +1,7 @@
 import Joi from 'joi';
 
-// require and configure dotenv, will load vars in .env in PROCESS.ENV
 require('dotenv').config();
 
-// define validation for all the env vars
 const envVarsSchema = Joi.object({
   NODE_ENV: Joi.string()
     .allow(['development', 'production', 'test', 'provision'])
@@ -17,9 +15,9 @@ const envVarsSchema = Joi.object({
       otherwise: Joi.boolean().default(false)
     }),
   JWT_SECRET: Joi.string().required()
-    .description('JWT Secret required to sign'),
+    .description('JWT Secret'),
   MONGO_HOST: Joi.string().required()
-    .description('Mongo DB host url'),
+    .description('Mongo DB host'),
   MONGO_PORT: Joi.number()
     .default(27017)
 }).unknown()
