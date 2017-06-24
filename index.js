@@ -6,7 +6,7 @@ import app from './config/express';
 const debug = require('debug')('express-mongoose-es6-rest-api:index');
 
 const mongoUri = config.mongo.host;
-require('./config/websocket').build(app);// build websocket
+require('./config/websocket').build(app); // build websocket
 
 mongoose.Promise = require('bluebird');
 
