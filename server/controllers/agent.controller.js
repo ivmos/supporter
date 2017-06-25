@@ -1,35 +1,31 @@
-import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
-import config from '../../config/config';
+import APISuccess from '../helpers/APISuccess';
 import Agent from '../models/agent.model';
 
-function register(req, res, next) {
-  const username = req.params.username;
-  const name = req.params.name;
-  const lastName = req.params.lastName;
-  const email = req.params.email;
-  const password = req.params.password;
+function register(req, res) {
+  const username = req.body.username;
+  const name = req.body.name;
+  const lastname = req.body.lastname;
+  const email = req.body.email;
+  const password = req.body.password;
 
-  const newAgent = new Agent({ username, password, name, lastName, email });
-  newAgent.save()
+  const newAgent = new Agent({ username, password, name, lastname, email });
+  newAgent
+    .save()
     .then(() => {
-      next();
-    })
-    .then(() => {
-      res.send('OK');
+      res.send(JSON.stringify(new APISuccess()));
+    }).catch((error) => {
+      res.send(JSON.stringify(new APIError('Error creating agent')));
     });
 }
 
-/**
- * Returns jwt token if valid username and password is provided
- * @param req
- * @param res
- * @param next
- * @returns {*}
- */
-function login(req, res, next) {
-  next();
-  return true;
+function login(req, res) {
+  Agent.getByEmail(req.body.email, req.body.password)
+    .then((agent) => {
+      res.send(new APISuccess(agent));
+    }).catch((error) => {
+      res.send(JSON.stringify(new APIError('Incorrecct')));
+    });
 }
 
 export default { login, register };

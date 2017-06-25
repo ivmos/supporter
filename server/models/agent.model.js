@@ -1,9 +1,6 @@
-import Promise from 'bluebird';
 import mongoose from 'mongoose';
-import httpStatus from 'http-status';
 import debug from 'debug';
 import bcrypt from 'promised-bcrypt';
-import APIError from '../helpers/APIError';
 
 const AgentSchema = new mongoose.Schema({
   password: {
@@ -14,13 +11,14 @@ const AgentSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  lastName: {
+  lastname: {
     type: String,
     required: true,
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    index: { unique: true, sparse: true }
   },
   createdTime: {
     type: Date,
@@ -28,32 +26,24 @@ const AgentSchema = new mongoose.Schema({
   }
 });
 
-AgentSchema.pre('save', (next) => { // eslint-disable-line consistent-return
+AgentSchema.pre('save', function result(next) { // eslint-disable-line consistent-return
   const agent = this;
-  if (!agent.isModified('password')) return next();
+  if (agent !== undefined && !agent.isModified('password')) {
+    return next();
+  }
 
   bcrypt.genSalt(10)
-    .catch(debug.err('Error generating salt'))
     .then(salt => bcrypt.hash(agent.password, salt))
-    .then((hash) => { agent.password = hash; next(); });
-});
-
-AgentSchema.method('comparePassword', (candidatePassword) => {
-  const agent = this;
-  return bcrypt.compare(candidatePassword, agent.password);
+    .then((hash) => { agent.password = hash; next(); })
+    .catch(error => debug.log(error));
 });
 
 AgentSchema.statics = {
-  get(email, password) {
-    return this.findOne({ email })
-      .exec()
-      .then((agent) => {
-        if (agent.comparePassowrd(password)) {
-          return Promise.resolve(agent);
-        }
-        const err = new APIError('No such agent exists!', httpStatus.NOT_FOUND);
-        return Promise.reject(err);
-      });
+  getByEmail(email, password) {
+    return this.findOne({ 'email': email }) // eslint-disable-line 
+      .then(agent => bcrypt.compare(password, agent.password))
+      .then(passwordMatches => passwordMatches)
+      .catch((error) => { console.log(error); return {}; });
   }
 };
 
