@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "gulp serve",
-    "start:debug": "cross-env DEBUG=express-mongoose-es6-rest-api:* yarn start",
+    "start:debug": "cross-env DEBUG=api:* yarn start",
     "build": "gulp",
     "lint": "esw *.js server config --color",
     "lint:watch": "yarn lint -- --watch",
@@ -46,7 +46,10 @@
     "morgan": "1.7.0",
     "winston": "2.3.0",
     "websocket": "^1.0.24",
-    "promised-bcrypt": "^2.0.0"
+    "promised-bcrypt": "^0.2.2",
+    "redis": "^0.12.1",
+    "express-unless": "*",
+    "jwt-redis-session": "^1.0.5"
   },
   "devDependencies": {
     "babel-cli": "6.18.0",

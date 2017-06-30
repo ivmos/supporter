@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import debug from 'debug';
 import bcrypt from 'promised-bcrypt';
+import jwt from 'jsonwebtoken';
+import config from '../../config/config';
 
 const AgentSchema = new mongoose.Schema({
   password: {
@@ -42,7 +44,13 @@ AgentSchema.statics = {
   getByEmail(email, password) {
     return this.findOne({ 'email': email }) // eslint-disable-line 
       .then(agent => bcrypt.compare(password, agent.password))
-      .then(passwordMatches => passwordMatches)
+      .then((passwordMatches) => {
+        if (passwordMatches) {
+          const token = jwt.sign({
+            username: agent.email
+          }, config.jwtSecret);
+        }
+      })
       .catch((error) => { console.log(error); return {}; });
   }
 };

@@ -3,7 +3,7 @@ import util from 'util';
 import config from './config/config';
 import app from './config/express';
 
-const debug = require('debug')('express-mongoose-es6-rest-api:index');
+const debug = require('debug')('api:index');
 
 const mongoUri = config.mongo.host;
 require('./config/websocket').build(app); // build websocket
