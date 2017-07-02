@@ -21,7 +21,6 @@ if (config.env === 'development') {
   app.use(logger('dev'));
 }
 
-auth.securize(app);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -29,6 +28,33 @@ app.use(compress());
 app.use(methodOverride());
 app.use(helmet());
 app.use(cors());
+app.use('/', routes);
+app.use(auth.secure());
+app.use((err, req, res, next) => {
+  if (err instanceof expressValidation.ValidationError) {
+    const unifiedErrorMessage = err.errors.map(error => error.messages.join('. ')).join(' and ');
+    const error = new APIError(unifiedErrorMessage, err.status, true);
+    return next(error);
+  } else if (!(err instanceof APIError)) {
+    const apiError = new APIError(err.message, err.status, err.isPublic);
+    return next(apiError);
+  } else if (err.name === 'UnauthorizedError') {
+    const apiError = new APIError(err.message, err.status, err.isPublic);
+    return next(apiError);
+  }
+  return next(err);
+});
+
+app.use((err, req, res) =>
+  res.status(err.status).json({
+    message: err.isPublic ? err.message : httpStatus[err.status],
+    stack: config.env === 'development' ? err.stack : {}
+  })
+);
+
+if (config.env !== 'test') {
+  app.use(expressWinston.errorLogger({ winstonInstance }));
+}
 
 if (config.env === 'development') {
   expressWinston.requestWhitelist.push('body');
@@ -40,36 +66,5 @@ if (config.env === 'development') {
     colorStatus: true
   }));
 }
-
-app.use('/', routes);
-app.use((err, req, res, next) => {
-  if (err instanceof expressValidation.ValidationError) {
-    const unifiedErrorMessage = err.errors.map(error => error.messages.join('. ')).join(' and ');
-    const error = new APIError(unifiedErrorMessage, err.status, true);
-    return next(error);
-  } else if (!(err instanceof APIError)) {
-    const apiError = new APIError(err.message, err.status, err.isPublic);
-    return next(apiError);
-  }
-  return next(err);
-});
-
-app.use((req, res, next) => {
-  const err = new APIError('API not found', httpStatus.NOT_FOUND);
-  return next(err);
-});
-
-if (config.env !== 'test') {
-  app.use(expressWinston.errorLogger({
-    winstonInstance
-  }));
-}
-
-app.use((err, req, res) =>
-  res.status(err.status).json({
-    message: err.isPublic ? err.message : httpStatus[err.status],
-    stack: config.env === 'development' ? err.stack : {}
-  })
-);
 
 export default app;

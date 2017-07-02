@@ -21,8 +21,7 @@ if (config.MONGOOSE_DEBUG) {
 }
 
 if (!module.parent) {
-  app.listen(config.port, () => {
-  });
+  app.listen(config.port, () => { });
 }
 
 export default app;
